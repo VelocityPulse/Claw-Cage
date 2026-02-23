@@ -81,6 +81,18 @@ Your `.env` and data volume are preserved.
 docker exec -it openclaw /bin/sh
 ```
 
+> **Note:** The production container is hardened (`cap_drop: ALL`, `no-new-privileges`). Commands like `apt` won't work — even as root. This is by design.
+
+## Troubleshooting container (unhardened)
+
+For maintenance tasks that need full root access (install packages, inspect configs, debug):
+
+```bash
+docker run --rm -it --network claw-cage_claw-net ghcr.io/openclaw/openclaw:latest /bin/sh
+```
+
+This starts a temporary container with no security restrictions, on the same network. It is destroyed on exit.
+
 ## Uninstall
 
 ```bash
