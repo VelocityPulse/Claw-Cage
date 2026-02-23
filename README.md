@@ -89,7 +89,7 @@ For maintenance tasks that need full root access (install packages, inspect conf
 
 ```bash
 cd ~/claw-cage
-docker compose --profile debug run --rm openclaw-debug /bin/sh
+docker compose --profile debug run --rm -u 0 openclaw-debug /bin/sh
 ```
 
 This starts a temporary container with no security restrictions, same data volume and same network as production. It is destroyed on exit.
