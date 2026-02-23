@@ -19,23 +19,6 @@ services:
     networks:
       - claw-net
 
-  openclaw-cli:
-    image: ghcr.io/openclaw/openclaw:latest
-    profiles:
-      - cli
-    stdin_open: true
-    tty: true
-    user: "1000:1000"
-    cap_drop:
-      - ALL
-    security_opt:
-      - no-new-privileges:true
-    env_file: .env
-    volumes:
-      - claw-data:/home/node/.openclaw
-    networks:
-      - claw-net
-
 networks:
   claw-net:
     driver: bridge

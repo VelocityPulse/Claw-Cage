@@ -75,6 +75,12 @@ cd ~/claw-cage && docker compose pull && docker compose up -d
 
 Your `.env` and data volume are preserved.
 
+## Shell into the running container
+
+```bash
+docker exec -it openclaw /bin/sh
+```
+
 ## Uninstall
 
 ```bash
@@ -98,19 +104,6 @@ rm -rf ~/claw-cage
 ```
 
 claw-cage is not a fork. It deploys the official OpenClaw image with network isolation and Docker hardening on top.
-
-## Shell into the running container
-
-```bash
-docker exec -it openclaw /bin/sh
-```
-
-## CLI access (separate session)
-
-```bash
-cd ~/claw-cage
-docker compose run --rm openclaw-cli
-```
 
 ## License
 
