@@ -4,6 +4,7 @@ set -euo pipefail
 # claw-cage installer
 # Usage: curl -fsSL https://raw.githubusercontent.com/VelocityPulse/claw-cage/main/install.sh | bash
 
+VERSION="0.7"
 REPO="https://raw.githubusercontent.com/VelocityPulse/claw-cage/main"
 INSTALL_DIR="${CLAW_CAGE_DIR:-$HOME/claw-cage}"
 
@@ -19,7 +20,7 @@ warn() { echo -e "  ${YELLOW}!${NC} $1"; }
 
 # --- Banner ---
 echo ""
-echo "  claw-cage — Secure OpenClaw Deployment"
+echo "  claw-cage v$VERSION — Secure OpenClaw Deployment"
 echo "  https://github.com/VelocityPulse/claw-cage"
 echo ""
 
