@@ -4,7 +4,7 @@ set -euo pipefail
 # claw-cage installer
 # Usage: curl -fsSL https://raw.githubusercontent.com/VelocityPulse/claw-cage/main/install.sh | bash
 
-VERSION="0.11"
+VERSION="0.12"
 REPO="https://raw.githubusercontent.com/VelocityPulse/claw-cage/main"
 INSTALL_DIR="${CLAW_CAGE_DIR:-$HOME/claw-cage}"
 
@@ -93,7 +93,9 @@ download() {
 download "$REPO/deploy/docker-compose.yml" "$INSTALL_DIR/docker-compose.yml" "docker-compose.yml"
 download "$REPO/deploy/.env.example" "$INSTALL_DIR/.env.example" ".env.example"
 download "$REPO/deploy/iptables-rules.sh" "$INSTALL_DIR/iptables-rules.sh" "iptables-rules.sh"
+download "$REPO/deploy/upgrade.sh" "$INSTALL_DIR/upgrade.sh" "upgrade.sh"
 chmod +x "$INSTALL_DIR/iptables-rules.sh"
+chmod +x "$INSTALL_DIR/upgrade.sh"
 
 # --- .env ---
 if [[ ! -f "$INSTALL_DIR/.env" ]]; then

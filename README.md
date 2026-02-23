@@ -69,11 +69,11 @@ All available variables are documented in [.env.example](deploy/.env.example).
 ## Upgrade
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/VelocityPulse/claw-cage/main/install.sh | bash
-cd ~/claw-cage && docker compose pull && docker compose up -d
+cd ~/claw-cage
+bash upgrade.sh
 ```
 
-Your `.env` and data volume are preserved.
+Updates deployment files, pulls the latest OpenClaw image, and restarts the stack. Your `.env` and data volume are preserved.
 
 ## Shell into the running container
 
