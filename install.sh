@@ -45,10 +45,21 @@ fi
 ok "docker"
 
 if ! docker info >/dev/null 2>&1; then
-    fail "Cannot connect to Docker daemon — permission denied"
-    echo ""
-    echo "    Fix: sudo usermod -aG docker $USER"
-    echo "    Then log out and back in (or run: newgrp docker)"
+    # Check if user is in docker group but session doesn't have it yet
+    if getent group docker 2>/dev/null | grep -qw "$USER"; then
+        fail "Cannot connect to Docker daemon"
+        echo ""
+        echo "    Your user is in the docker group but the session is stale."
+        echo "    Log out and back in (SSH reconnect), then re-run this installer."
+    else
+        fail "Cannot connect to Docker daemon — permission denied"
+        echo ""
+        echo "    Fix:"
+        echo "      sudo usermod -aG docker $USER"
+        echo ""
+        echo "    Then DISCONNECT and RECONNECT your SSH session."
+        echo "    The group change only takes effect after a new login."
+    fi
     exit 1
 fi
 ok "docker daemon accessible"
