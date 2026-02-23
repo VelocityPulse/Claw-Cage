@@ -308,7 +308,7 @@ VERSION="${1:-main}"  # Supports --version for future pinning
 │  │      cap_drop: ALL                    │  │
 │  │      security_opt: no-new-privileges  │  │
 │  │      restart: unless-stopped          │  │
-│  │      ports: 127.0.0.1:18789:18789    │  │
+│  │      ports: 127.0.0.1:18789:18789     │  │
 │  │                                       │  │
 │  │      volumes:                         │  │
 │  │        - claw-config:/home/node/      │  │

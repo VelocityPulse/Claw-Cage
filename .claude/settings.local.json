@@ -1,7 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit: project scaffolding and IDEA spec\n\nSet up claw-cage repo with BMAD framework, Claude Code commands,\nand the full project specification \\(IDEA.md\\) for a secure,\nDocker-first OpenClaw deployment template.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "Bash(find:*)",
+      "WebFetch(domain:docs.bmad-method.org)",
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(npx bmad-method:*)"
     ]
   }
 }
