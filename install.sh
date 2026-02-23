@@ -4,7 +4,7 @@ set -euo pipefail
 # claw-cage installer
 # Usage: curl -fsSL https://raw.githubusercontent.com/VelocityPulse/claw-cage/main/install.sh | bash
 
-VERSION="0.7"
+VERSION="0.8"
 REPO="https://raw.githubusercontent.com/VelocityPulse/claw-cage/main"
 INSTALL_DIR="${CLAW_CAGE_DIR:-$HOME/claw-cage}"
 
@@ -105,32 +105,46 @@ else
 fi
 
 # --- Auto-start on boot ---
-DOCKER_ENABLED=""
 if command -v systemctl >/dev/null 2>&1; then
+    DOCKER_ENABLED=""
     if systemctl is-enabled docker >/dev/null 2>&1; then
         DOCKER_ENABLED="yes"
     fi
-fi
 
-if [[ "$DOCKER_ENABLED" != "yes" && "${CLAW_AUTOSTART:-}" != "no" ]]; then
     echo ""
     AUTOSTART_ANSWER=""
-    if [[ -t 0 ]]; then
-        # Interactive mode — ask the user
-        read -r -p "  Enable OpenClaw auto-start on boot? [y/N] " AUTOSTART_ANSWER
-    elif [[ -r /dev/tty ]]; then
-        # Piped mode (curl | bash) — read from terminal
-        read -r -p "  Enable OpenClaw auto-start on boot? [y/N] " AUTOSTART_ANSWER </dev/tty
-    fi
-    # Also accept CLAW_AUTOSTART=yes env var
-    if [[ "${CLAW_AUTOSTART:-}" == "yes" ]]; then
-        AUTOSTART_ANSWER="y"
-    fi
-    if [[ "$AUTOSTART_ANSWER" =~ ^[Yy]$ ]]; then
-        echo "  Run: sudo systemctl enable docker"
-        echo "  (requires sudo — not executed automatically)"
+    if [[ "$DOCKER_ENABLED" == "yes" ]]; then
+        PROMPT="  Auto-start is currently ENABLED. Keep it enabled? [Y/n] "
     else
-        warn "Auto-start skipped. To enable later: sudo systemctl enable docker"
+        PROMPT="  Enable OpenClaw auto-start on boot? [y/N] "
+    fi
+
+    # Read answer from user (works in both interactive and curl|bash mode)
+    if [[ "${CLAW_AUTOSTART:-}" != "" ]]; then
+        # Env var override — no prompt
+        AUTOSTART_ANSWER="${CLAW_AUTOSTART}"
+    elif [[ -t 0 ]]; then
+        read -r -p "$PROMPT" AUTOSTART_ANSWER
+    elif [[ -r /dev/tty ]]; then
+        read -r -p "$PROMPT" AUTOSTART_ANSWER </dev/tty
+    fi
+
+    if [[ "$DOCKER_ENABLED" == "yes" ]]; then
+        # Currently enabled — disable on explicit "n"
+        if [[ "$AUTOSTART_ANSWER" =~ ^[Nn] ]]; then
+            sudo systemctl disable docker
+            warn "Auto-start DISABLED. Docker will not start on boot."
+        else
+            ok "Auto-start kept enabled."
+        fi
+    else
+        # Currently disabled — enable on explicit "y"
+        if [[ "$AUTOSTART_ANSWER" =~ ^[Yy] ]]; then
+            sudo systemctl enable docker
+            ok "Auto-start ENABLED. OpenClaw will start on boot."
+        else
+            warn "Auto-start skipped. To enable later: sudo systemctl enable docker"
+        fi
     fi
 fi
 
@@ -144,8 +158,4 @@ echo "    cd $INSTALL_DIR"
 echo "    vim .env                              # Add your API keys"
 echo "    sudo bash iptables-rules.sh            # Network isolation (one-time)"
 echo "    docker compose up -d                   # Start OpenClaw"
-if [[ "$DOCKER_ENABLED" == "yes" ]]; then
-echo ""
-echo "  Docker is enabled on boot — OpenClaw will auto-restart after reboot."
-fi
 echo ""
