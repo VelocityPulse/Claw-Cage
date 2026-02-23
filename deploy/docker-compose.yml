@@ -1,0 +1,48 @@
+# claw-cage — Secure OpenClaw Deployment
+# https://github.com/VelocityPulse/claw-cage
+
+services:
+  openclaw:
+    image: ghcr.io/openclaw/openclaw:latest
+    container_name: openclaw
+    user: "1000:1000"
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:18789:18789"
+    env_file: .env
+    volumes:
+      - claw-data:/home/node/.openclaw
+    networks:
+      - claw-net
+
+  openclaw-cli:
+    image: ghcr.io/openclaw/openclaw:latest
+    profiles:
+      - cli
+    stdin_open: true
+    tty: true
+    user: "1000:1000"
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    env_file: .env
+    volumes:
+      - claw-data:/home/node/.openclaw
+    networks:
+      - claw-net
+
+networks:
+  claw-net:
+    driver: bridge
+    enable_ipv6: false
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+volumes:
+  claw-data:

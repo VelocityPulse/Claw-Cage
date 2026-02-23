@@ -9,7 +9,20 @@
       "Bash(find:*)",
       "WebFetch(domain:docs.bmad-method.org)",
       "WebFetch(domain:www.npmjs.com)",
-      "Bash(npx bmad-method:*)"
+      "Bash(npx bmad-method:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd BMAD BMM module \\(Agile AI-Driven Development\\)\n\nInstall the full BMad Method module with 9 agents \\(Analyst, Architect,\nDev, PM, QA, Scrum Master, Solo Dev, Tech Writer, UX Designer\\) and\n25 workflows covering the complete agile development lifecycle.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "WebFetch(domain:docs.openclaw.ai)",
+      "WebFetch(domain:boostedhost.com)",
+      "WebFetch(domain:deepwiki.com)",
+      "WebFetch(domain:hub.docker.com)",
+      "WebFetch(domain:ajfisher.me)",
+      "WebFetch(domain:zenvanriel.nl)",
+      "WebFetch(domain:gist.github.com)",
+      "WebFetch(domain:joulyan.com)",
+      "WebFetch(domain:awakehost.com)",
+      "WebFetch(domain:www.answeroverflow.com)",
+      "WebFetch(domain:til.simonwillison.net)",
+      "WebFetch(domain:eastondev.com)"
     ]
   }
 }
