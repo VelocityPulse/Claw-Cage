@@ -121,6 +121,12 @@ docker compose up -d
 
 Your `.env` and `claw-data` volume are preserved. Only `docker-compose.yml` and `iptables-rules.sh` are updated.
 
+If the release notes mention iptables changes, re-apply the rules:
+
+```bash
+sudo bash iptables-rules.sh
+```
+
 ## Uninstall
 
 ```bash

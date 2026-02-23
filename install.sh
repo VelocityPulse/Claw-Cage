@@ -26,8 +26,8 @@ echo ""
 # --- Prerequisites ---
 echo "Checking prerequisites..."
 
-if [[ "${BASH_VERSINFO[0]}" -lt 4 ]]; then
-    fail "bash >= 4 required (found ${BASH_VERSION})"
+if [[ "${BASH_VERSINFO[0]:-0}" -lt 4 ]]; then
+    fail "bash >= 4 required (found ${BASH_VERSION:-unknown})"
     exit 1
 fi
 ok "bash ${BASH_VERSION}"
@@ -48,7 +48,8 @@ if ! docker compose version >/dev/null 2>&1; then
     fail "docker compose v2 not found — install the Compose plugin: https://docs.docker.com/compose/install/"
     exit 1
 fi
-ok "docker compose $(docker compose version --short)"
+COMPOSE_VER=$(docker compose version --short 2>/dev/null || echo "v2")
+ok "docker compose $COMPOSE_VER"
 
 ARCH=$(uname -m)
 ok "architecture: $ARCH"
@@ -59,15 +60,19 @@ echo ""
 echo "Installing claw-cage to $INSTALL_DIR..."
 mkdir -p "$INSTALL_DIR"
 
-curl -fsSL "$REPO/deploy/docker-compose.yml" -o "$INSTALL_DIR/docker-compose.yml"
-ok "docker-compose.yml"
+download() {
+    local url="$1" dest="$2" name="$3"
+    if ! curl -fsSL "$url" -o "$dest"; then
+        fail "Failed to download $name — check your internet connection"
+        exit 1
+    fi
+    ok "$name"
+}
 
-curl -fsSL "$REPO/deploy/.env.example" -o "$INSTALL_DIR/.env.example"
-ok ".env.example"
-
-curl -fsSL "$REPO/deploy/iptables-rules.sh" -o "$INSTALL_DIR/iptables-rules.sh"
+download "$REPO/deploy/docker-compose.yml" "$INSTALL_DIR/docker-compose.yml" "docker-compose.yml"
+download "$REPO/deploy/.env.example" "$INSTALL_DIR/.env.example" ".env.example"
+download "$REPO/deploy/iptables-rules.sh" "$INSTALL_DIR/iptables-rules.sh" "iptables-rules.sh"
 chmod +x "$INSTALL_DIR/iptables-rules.sh"
-ok "iptables-rules.sh"
 
 # --- .env ---
 if [[ ! -f "$INSTALL_DIR/.env" ]]; then
