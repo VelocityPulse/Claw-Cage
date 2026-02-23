@@ -23,6 +23,7 @@ services:
     image: ghcr.io/openclaw/openclaw:latest
     profiles:
       - debug
+    user: "0:0"
     stdin_open: true
     tty: true
     env_file: .env
