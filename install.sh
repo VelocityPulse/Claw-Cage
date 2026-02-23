@@ -4,7 +4,7 @@ set -euo pipefail
 # claw-cage installer
 # Usage: curl -fsSL https://raw.githubusercontent.com/VelocityPulse/claw-cage/main/install.sh | bash
 
-VERSION="0.14"
+VERSION="0.15"
 REPO="https://raw.githubusercontent.com/VelocityPulse/claw-cage/main"
 INSTALL_DIR="${CLAW_CAGE_DIR:-$HOME/claw-cage}"
 
@@ -104,6 +104,50 @@ if [[ ! -f "$INSTALL_DIR/.env" ]]; then
     ok ".env created (mode 600)"
 else
     warn ".env already exists — not overwriting"
+fi
+
+# --- Helper scripts (up/down/reset) ---
+HELPERS_EXIST=""
+[[ -f "$INSTALL_DIR/up.sh" ]] && HELPERS_EXIST="yes"
+
+echo ""
+HELPERS_ANSWER=""
+HELPERS_PROMPT="  Install helper scripts (up.sh, down.sh, reset.sh)? [y/N] "
+if [[ "$HELPERS_EXIST" == "yes" ]]; then
+    HELPERS_PROMPT="  Keep helper scripts (up.sh, down.sh, reset.sh)? [Y/n] "
+fi
+
+if [[ "${CLAW_HELPERS:-}" != "" ]]; then
+    HELPERS_ANSWER="${CLAW_HELPERS}"
+elif [[ -t 0 ]]; then
+    read -r -p "$HELPERS_PROMPT" HELPERS_ANSWER
+elif [[ -r /dev/tty ]]; then
+    read -r -p "$HELPERS_PROMPT" HELPERS_ANSWER </dev/tty
+fi
+
+if [[ "$HELPERS_EXIST" == "yes" ]]; then
+    # Currently installed — remove on explicit "n"
+    if [[ "$HELPERS_ANSWER" =~ ^[Nn] ]]; then
+        rm -f "$INSTALL_DIR/up.sh" "$INSTALL_DIR/down.sh" "$INSTALL_DIR/reset.sh"
+        warn "Helper scripts removed."
+    else
+        download "$REPO/deploy/up.sh" "$INSTALL_DIR/up.sh" "up.sh"
+        download "$REPO/deploy/down.sh" "$INSTALL_DIR/down.sh" "down.sh"
+        download "$REPO/deploy/reset.sh" "$INSTALL_DIR/reset.sh" "reset.sh"
+        chmod +x "$INSTALL_DIR/up.sh" "$INSTALL_DIR/down.sh" "$INSTALL_DIR/reset.sh"
+        ok "Helper scripts updated."
+    fi
+else
+    # Not installed — install on explicit "y"
+    if [[ "$HELPERS_ANSWER" =~ ^[Yy] ]]; then
+        download "$REPO/deploy/up.sh" "$INSTALL_DIR/up.sh" "up.sh"
+        download "$REPO/deploy/down.sh" "$INSTALL_DIR/down.sh" "down.sh"
+        download "$REPO/deploy/reset.sh" "$INSTALL_DIR/reset.sh" "reset.sh"
+        chmod +x "$INSTALL_DIR/up.sh" "$INSTALL_DIR/down.sh" "$INSTALL_DIR/reset.sh"
+        ok "Helper scripts installed."
+    else
+        warn "Helper scripts skipped."
+    fi
 fi
 
 # --- Auto-start on boot ---

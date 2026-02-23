@@ -12,8 +12,11 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'
 
+YELLOW='\033[1;33m'
+
 ok()   { echo -e "  ${GREEN}✓${NC} $1"; }
 fail() { echo -e "  ${RED}✗${NC} $1"; }
+warn() { echo -e "  ${YELLOW}!${NC} $1"; }
 
 echo ""
 echo "  claw-cage — Upgrade"
@@ -37,6 +40,48 @@ download "$REPO/deploy/iptables-rules.sh" "$INSTALL_DIR/iptables-rules.sh" "ipta
 download "$REPO/deploy/upgrade.sh" "$INSTALL_DIR/upgrade.sh" "upgrade.sh"
 chmod +x "$INSTALL_DIR/iptables-rules.sh"
 chmod +x "$INSTALL_DIR/upgrade.sh"
+
+# --- Helper scripts (up/down/reset) ---
+HELPERS_EXIST=""
+[[ -f "$INSTALL_DIR/up.sh" ]] && HELPERS_EXIST="yes"
+
+echo ""
+HELPERS_ANSWER=""
+HELPERS_PROMPT="  Install helper scripts (up.sh, down.sh, reset.sh)? [y/N] "
+if [[ "$HELPERS_EXIST" == "yes" ]]; then
+    HELPERS_PROMPT="  Keep helper scripts (up.sh, down.sh, reset.sh)? [Y/n] "
+fi
+
+if [[ "${CLAW_HELPERS:-}" != "" ]]; then
+    HELPERS_ANSWER="${CLAW_HELPERS}"
+elif [[ -t 0 ]]; then
+    read -r -p "$HELPERS_PROMPT" HELPERS_ANSWER
+elif [[ -r /dev/tty ]]; then
+    read -r -p "$HELPERS_PROMPT" HELPERS_ANSWER </dev/tty
+fi
+
+if [[ "$HELPERS_EXIST" == "yes" ]]; then
+    if [[ "$HELPERS_ANSWER" =~ ^[Nn] ]]; then
+        rm -f "$INSTALL_DIR/up.sh" "$INSTALL_DIR/down.sh" "$INSTALL_DIR/reset.sh"
+        warn "Helper scripts removed."
+    else
+        download "$REPO/deploy/up.sh" "$INSTALL_DIR/up.sh" "up.sh"
+        download "$REPO/deploy/down.sh" "$INSTALL_DIR/down.sh" "down.sh"
+        download "$REPO/deploy/reset.sh" "$INSTALL_DIR/reset.sh" "reset.sh"
+        chmod +x "$INSTALL_DIR/up.sh" "$INSTALL_DIR/down.sh" "$INSTALL_DIR/reset.sh"
+        ok "Helper scripts updated."
+    fi
+else
+    if [[ "$HELPERS_ANSWER" =~ ^[Yy] ]]; then
+        download "$REPO/deploy/up.sh" "$INSTALL_DIR/up.sh" "up.sh"
+        download "$REPO/deploy/down.sh" "$INSTALL_DIR/down.sh" "down.sh"
+        download "$REPO/deploy/reset.sh" "$INSTALL_DIR/reset.sh" "reset.sh"
+        chmod +x "$INSTALL_DIR/up.sh" "$INSTALL_DIR/down.sh" "$INSTALL_DIR/reset.sh"
+        ok "Helper scripts installed."
+    else
+        warn "Helper scripts skipped."
+    fi
+fi
 
 # --- Pull & restart ---
 echo ""
