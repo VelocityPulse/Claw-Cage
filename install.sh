@@ -44,6 +44,15 @@ if ! command -v docker >/dev/null; then
 fi
 ok "docker"
 
+if ! docker info >/dev/null 2>&1; then
+    fail "Cannot connect to Docker daemon — permission denied"
+    echo ""
+    echo "    Fix: sudo usermod -aG docker $USER"
+    echo "    Then log out and back in (or run: newgrp docker)"
+    exit 1
+fi
+ok "docker daemon accessible"
+
 if ! docker compose version >/dev/null 2>&1; then
     fail "docker compose v2 not found — install the Compose plugin: https://docs.docker.com/compose/install/"
     exit 1
