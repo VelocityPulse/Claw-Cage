@@ -28,7 +28,6 @@ Then:
 cd ~/claw-cage
 vim .env                              # Add at least one API key
 sudo bash iptables-rules.sh            # LAN isolation (one-time)
-sudo systemctl enable docker           # Auto-start on boot (optional)
 docker compose up -d                   # Start OpenClaw
 ```
 

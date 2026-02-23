@@ -91,6 +91,28 @@ if command -v systemctl >/dev/null 2>&1; then
     fi
 fi
 
+if [[ "$DOCKER_ENABLED" != "yes" && "${CLAW_AUTOSTART:-}" != "no" ]]; then
+    echo ""
+    AUTOSTART_ANSWER=""
+    if [[ -t 0 ]]; then
+        # Interactive mode — ask the user
+        read -r -p "  Enable OpenClaw auto-start on boot? [y/N] " AUTOSTART_ANSWER
+    elif [[ -r /dev/tty ]]; then
+        # Piped mode (curl | bash) — read from terminal
+        read -r -p "  Enable OpenClaw auto-start on boot? [y/N] " AUTOSTART_ANSWER </dev/tty
+    fi
+    # Also accept CLAW_AUTOSTART=yes env var
+    if [[ "${CLAW_AUTOSTART:-}" == "yes" ]]; then
+        AUTOSTART_ANSWER="y"
+    fi
+    if [[ "$AUTOSTART_ANSWER" =~ ^[Yy]$ ]]; then
+        echo "  Run: sudo systemctl enable docker"
+        echo "  (requires sudo — not executed automatically)"
+    else
+        warn "Auto-start skipped. To enable later: sudo systemctl enable docker"
+    fi
+fi
+
 # --- Next steps ---
 echo ""
 echo "  Installation complete!"
@@ -100,15 +122,9 @@ echo ""
 echo "    cd $INSTALL_DIR"
 echo "    vim .env                              # Add your API keys"
 echo "    sudo bash iptables-rules.sh            # Network isolation (one-time)"
-if [[ "$DOCKER_ENABLED" != "yes" ]]; then
-echo "    sudo systemctl enable docker           # Auto-start on boot"
-fi
 echo "    docker compose up -d                   # Start OpenClaw"
 if [[ "$DOCKER_ENABLED" == "yes" ]]; then
 echo ""
 echo "  Docker is enabled on boot — OpenClaw will auto-restart after reboot."
-else
-echo ""
-echo "  To auto-start OpenClaw on boot: sudo systemctl enable docker"
 fi
 echo ""
