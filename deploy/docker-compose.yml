@@ -19,6 +19,18 @@ services:
     networks:
       - claw-net
 
+  openclaw-debug:
+    image: ghcr.io/openclaw/openclaw:latest
+    profiles:
+      - debug
+    stdin_open: true
+    tty: true
+    env_file: .env
+    volumes:
+      - claw-data:/home/node/.openclaw
+    networks:
+      - claw-net
+
 networks:
   claw-net:
     driver: bridge
