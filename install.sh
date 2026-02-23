@@ -83,6 +83,14 @@ else
     warn ".env already exists — not overwriting"
 fi
 
+# --- Auto-start on boot ---
+DOCKER_ENABLED=""
+if command -v systemctl >/dev/null 2>&1; then
+    if systemctl is-enabled docker >/dev/null 2>&1; then
+        DOCKER_ENABLED="yes"
+    fi
+fi
+
 # --- Next steps ---
 echo ""
 echo "  Installation complete!"
@@ -90,7 +98,17 @@ echo ""
 echo "  Next steps:"
 echo ""
 echo "    cd $INSTALL_DIR"
-echo "    nano .env                              # Add your API keys"
+echo "    vim .env                              # Add your API keys"
 echo "    sudo bash iptables-rules.sh            # Network isolation (one-time)"
+if [[ "$DOCKER_ENABLED" != "yes" ]]; then
+echo "    sudo systemctl enable docker           # Auto-start on boot"
+fi
 echo "    docker compose up -d                   # Start OpenClaw"
+if [[ "$DOCKER_ENABLED" == "yes" ]]; then
+echo ""
+echo "  Docker is enabled on boot — OpenClaw will auto-restart after reboot."
+else
+echo ""
+echo "  To auto-start OpenClaw on boot: sudo systemctl enable docker"
+fi
 echo ""

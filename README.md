@@ -26,8 +26,9 @@ Then:
 
 ```bash
 cd ~/claw-cage
-nano .env                              # Add at least one API key
+vim .env                              # Add at least one API key
 sudo bash iptables-rules.sh            # LAN isolation (one-time)
+sudo systemctl enable docker           # Auto-start on boot (optional)
 docker compose up -d                   # Start OpenClaw
 ```
 
@@ -99,9 +100,16 @@ rm -rf ~/claw-cage
 
 claw-cage is not a fork. It deploys the official OpenClaw image with network isolation and Docker hardening on top.
 
-## CLI access
+## Shell into the running container
 
 ```bash
+docker exec -it openclaw /bin/sh
+```
+
+## CLI access (separate session)
+
+```bash
+cd ~/claw-cage
 docker compose run --rm openclaw-cli
 ```
 
