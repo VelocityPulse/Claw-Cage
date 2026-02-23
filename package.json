@@ -1,0 +1,20 @@
+{
+  "name": "claw-cage",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/VelocityPulse/claw-cage#readme",
+  "bugs": {
+    "url": "https://github.com/VelocityPulse/claw-cage/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VelocityPulse/claw-cage.git"
+  },
+  "license": "ISC",
+  "author": "VelocityPulse",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
