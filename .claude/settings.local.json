@@ -24,7 +24,8 @@
       "WebFetch(domain:til.simonwillison.net)",
       "WebFetch(domain:eastondev.com)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nImplement claw-cage MVP: secure OpenClaw deployment template\n\nAdd all 6 deployment artifacts:\n- .gitignore: protect .env secrets from commits\n- deploy/docker-compose.yml: hardened stack \\(cap_drop ALL, non-root,\n  no-new-privileges, loopback port, IPv6 disabled on claw-net\\)\n- deploy/.env.example: multi-provider config template\n- deploy/iptables-rules.sh: DOCKER-USER LAN isolation with correct\n  rule ordering \\(claw-subnet ACCEPT before /12 DROP, DNS resolver\\)\n- install.sh: idempotent curl installer with prereq checks\n- README.md: full docs with SSH tunnel tuto \\(Linux/Mac/Windows\\)\n\nIncludes BMAD planning artifacts \\(validation decisions, tech spec\\).\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git mv:*)"
     ]
   }
 }
